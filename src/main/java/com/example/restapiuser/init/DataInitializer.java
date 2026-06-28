@@ -10,10 +10,9 @@ import org.springframework.transaction.annotation.Transactional;
 
 @Component
 public class DataInitializer implements ApplicationRunner {
-    // ApplicationRunner : 어플리케이션이 시작된 후 자동으로 실행되는
-    // run() 함수 가지고 있는 클래스
+    // ApplicationRunner : 애플리케이션이 시작된 후 자동으로 실행되는
+    //  run() 함수 가지있는 클래스
     private final UserRepository userRepository;
-
     // 생성자 주입
     public DataInitializer(UserRepository userRepository) {
         this.userRepository = userRepository;
@@ -33,7 +32,6 @@ public class DataInitializer implements ApplicationRunner {
         if (userRepository.existsById(userid)) {
             return;
         }
-
         userRepository.save(new UserEntity(userid, passwd, username, email));
     }
 }
