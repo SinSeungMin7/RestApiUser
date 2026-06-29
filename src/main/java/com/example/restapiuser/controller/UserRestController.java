@@ -51,6 +51,14 @@ public class UserRestController {
          */
     }
 
+    // 회원삭제 DELETE DETELE(SQL)
+    // DELETE http://localhost:8080/api/users/test1
+    @DeleteMapping("/{userid}")
+    public DeleteResponse delete( @PathVariable String userid) {
+        userService.deleteUser(userid);
+        return new DeleteResponse(userid, true);
+    }
+
 }
 
 

@@ -6,6 +6,7 @@ import com.example.restapiuser.entity.UserEntity;
 import com.example.restapiuser.exception.ApiException;
 import com.example.restapiuser.repository.UserRepository;
 import jakarta.validation.Valid;
+import org.springframework.boot.webmvc.autoconfigure.WebMvcProperties;
 import org.springframework.http.HttpStatus;
 import org.springframework.stereotype.Service;
 import org.springframework.transaction.annotation.Transactional;
@@ -40,6 +41,7 @@ public class UserService {
                     //  list.stream() -> ArrayList 로 변경
     }
 
+    // 회원 추가
     @Transactional
     public UserResponse createUser(@Valid UserCreateRequest request) {
         if( userRepository.existsById( request.userid() ) ) {
@@ -56,6 +58,20 @@ public class UserService {
 
         UserEntity savedUser = userRepository.save(user);
         return  UserResponse.from(savedUser);
+    }
+
+    // 회원 삭제 
+    @Transactional
+    public void deleteUser(String userid) {
+        UserEntity user = getUserEntity(userid);
+        userRepository.delete(user);
+    }
+
+    // userid 로 검색
+    private UserEntity getUserEntity(String userid) {
+        return userRepository.findById(userid).
+                orElseThrow( () ->  new ApiException(HttpStatus.NOT_FOUND,
+                        "사용자를 찾을 수 없습니다" + userid ) );
     }
 }
 

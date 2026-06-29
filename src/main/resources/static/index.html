@@ -100,7 +100,7 @@
             const email      = user.email;
             const indate     = user.indate;
             let tr = `
-                <tr>
+                <tr data-userid="${userid}">
                   <td>${userid}</td>
                   <td>${username}</td>
                   <td>${email}</td>
@@ -168,6 +168,17 @@
         text_clear()
         await getUsers();
     }
+    // data_delete()
+    async function data_delete( userid ){
+        // API_USER = /api/users/userid
+        await requestJson(`${API_URL}/${userid}`, {
+            method: 'DELETE'
+        })
+
+        text_clear();
+        await getUsers();  // data 전체 조회
+    }
+
 
     // requestJson()
     async function requestJson(url, options = {}) {
@@ -246,8 +257,8 @@
         // -------------------
         // a tag 를 버튼으로 사용하려면 기본이벤트( href 롤 이동)를 무력화하고 사용해야한다
         // 추가버튼 클릭
-        const  btnInserEl = document.getElementById('btnInsert');
-        btnInserEl.addEventListener('click', async function( event ) {
+        const  btnInsertEl = document.getElementById('btnInsert');
+        btnInsertEl.addEventListener('click', async function( event ) {
            // alert('추가')
             console.log( event );
             event.preventDefault(); // 기본이벤트 취소
@@ -271,9 +282,51 @@
         // -------------------
         // 삭제버튼 클릭
         const  btnDeleteEl = document.getElementById('btnDelete');
-        btnDeleteEl.addEventListener('click', async function() {
-            alert('삭제')
+        btnDeleteEl.addEventListener('click', async function(e) {
+            // alert('삭제')
+            e.preventDefault();  // 기본이벤트 제거
+            e.stopPropagation(); // 이벤트 버블링 방지
+
+            const useridEl = document.getElementById('userid');
+            if (useridEl.value == '') return;
+
+            let yes = confirm( useridEl.value + "삭제 하시겠습니까?" )
+
+            if (!yes) return;
+
+            try {
+                await data_delete( useridEl.value );
+            } catch (err) {
+                console.log(err);
+                alert('오류발생')
+            }
         })
+
+        // 삭제버튼 : 휴지통 아이콘 클릭 :
+        // 실행시 생성된 버튼이라 검색이 안된다 document.querySelector('.btnDel'); --> null
+        // const div1El = document.querySelectorAll('#div1');
+        div1El.addEventListener('click', async e => {
+            e.preventDefault();
+            e.stopPropagation();
+
+            // el.closest('tr') : el 의 가장 가까운 부모 tag
+            console.log(e.target.closest('tr'))
+            const tr     = e.target.closest('tr')
+            const userid = tr.dataset.userid
+            // alert(userid)
+            let yes = confirm( userid + "를 삭제하시겠습니까?");
+
+            if (!yes || userid == "admmin") return;
+
+            try {
+                await data_delete( userid );
+            } catch (err) {
+                console.log(err);
+                alert('오류발생')
+            }
+        })
+
+
 
         // -------------------
         // clear 버튼 클릭
