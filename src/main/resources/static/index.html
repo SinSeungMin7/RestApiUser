@@ -23,40 +23,40 @@
     </style>
 </head>
 <body>
-  <main>
+<main>
     <h2>회원 REST API Test</h2>
     <form id="form1">
-     <table  class="form-table">
-      <tr>
-          <td>아이디</td>
-          <td><input type="text" id="userid" required></td>
-      </tr>
-      <tr>
-          <td>암호</td>
-          <td><input type="password" id="passwd" required ></td>
-      </tr>
-      <tr>
-          <td>이름</td>
-          <td><input type="text" id="username" required ></td>
-      </tr>
-      <tr>
-          <td>이메일</td>
-          <td><input type="email" id="email" ></td>
-      </tr>
-      <tr>
-          <td>가입일</td>
-          <td><input type="text" id="indate" readonly ></td>
-      </tr>
-      <tr>
-          <td colspan="2">
-            <a id="btnInsert" href="#" class="btn btn-primary btn-sm">추가</a>
-            <a id="btnUpdate" href="#" class="btn btn-warning btn-sm">수정</a>
-            <a id="btnDelete" href="#" class="btn btn-danger  btn-sm">삭제</a>
-            <input type="button" id="btnClear"  class="btn btn-info  btn-sm" value="Clear" />
-          </td>
-      </tr>
+        <table  class="form-table">
+            <tr>
+                <td>아이디</td>
+                <td><input type="text" id="userid" required></td>
+            </tr>
+            <tr>
+                <td>암호</td>
+                <td><input type="password" id="passwd" required ></td>
+            </tr>
+            <tr>
+                <td>이름</td>
+                <td><input type="text" id="username" required ></td>
+            </tr>
+            <tr>
+                <td>이메일</td>
+                <td><input type="email" id="email" ></td>
+            </tr>
+            <tr>
+                <td>가입일</td>
+                <td><input type="text" id="indate" readonly ></td>
+            </tr>
+            <tr>
+                <td colspan="2">
+                    <a id="btnInsert" href="#" class="btn btn-primary btn-sm">추가</a>
+                    <a id="btnUpdate" href="#" class="btn btn-warning btn-sm">수정</a>
+                    <a id="btnDelete" href="#" class="btn btn-danger  btn-sm">삭제</a>
+                    <input type="button" id="btnClear"  class="btn btn-info  btn-sm" value="Clear" />
+                </td>
+            </tr>
 
-     </table>
+        </table>
     </form>
 
     <div id="message" class="message"></div>
@@ -69,10 +69,10 @@
 
     <div id="div1"></div>
 
-  </main>
+</main>
 
-  <!-- -------------------------------------------------------- -->
-  <script>
+<!-- -------------------------------------------------------- -->
+<script>
     const  API_URL = '/api/users';   // 기본 api 주소
 
     // #div1 table ui 시작 -------------------------
@@ -100,7 +100,7 @@
             const email      = user.email;
             const indate     = user.indate;
             let tr = `
-                <tr data-userid="${userid}">
+                <tr data-userid="${userid}" >
                   <td>${userid}</td>
                   <td>${username}</td>
                   <td>${email}</td>
@@ -154,12 +154,7 @@
     async function data_insert() {
         const options = {
             method: 'POST',
-            body: JSON.stringify( {
-                userid: 'foo',
-                passwd: 'bar',
-                username: 'foobar',
-                email : 'foo@bar.com'
-            }),
+            body: JSON.stringify( formToUser() ),
             headers: {
                 'Content-type': 'application/json; charset=UTF-8',
             }
@@ -168,9 +163,26 @@
         text_clear()
         await getUsers();
     }
+
+    // data_update()
+    async function data_update( userid ) {
+        // PATCH /api/users/test1
+        const options = {
+            method: 'PATCH',    // 일부 수정
+            body: JSON.stringify( formToUser() ),
+            headers: {
+                'Content-type': 'application/json; charset=UTF-8',
+            }
+        }
+        await requestJson(`${API_URL}/${userid}`, options )
+
+        text_clear();
+        await getUsers();  // data 전체 조회
+    }
+
     // data_delete()
-    async function data_delete( userid ){
-        // API_USER = /api/users/userid
+    async function data_delete() {
+        // PATCH http://localhost:8080/api/users/test01
         await requestJson(`${API_URL}/${userid}`, {
             method: 'DELETE'
         })
@@ -178,7 +190,6 @@
         text_clear();
         await getUsers();  // data 전체 조회
     }
-
 
     // requestJson()
     async function requestJson(url, options = {}) {
@@ -232,8 +243,8 @@
             // let tds = event.target.parentElement.children;
             let tds = event.target.closest('tr').children;
             console.dir(tds);
-              // HTMLCollection(5) [td, td, td, td, td]
-              //  tds.forEach() 로 출력안됨 : tag collection
+            // HTMLCollection(5) [td, td, td, td, td]
+            //  tds.forEach() 로 출력안됨 : tag collection
 
             const useridEl = document.getElementById('userid');
             const passwdEl = document.getElementById('passwd');
@@ -242,14 +253,14 @@
             const indateEl = document.getElementById('indate');
 
             Array.from(tds).forEach( (td, i) => { // 작동한다
-               if( td.tagName != "TD" ) return;
-               console.dir( td )
-               switch ( i ) {
-                   case 0: useridEl.value   = td.innerHTML; break;
-                   case 1: usernameEl.value = td.innerHTML; break;
-                   case 2: emailEl.value    = td.innerHTML; break;
-                   case 3: indateEl.value   = td.innerHTML; break;
-               }
+                if( td.tagName != "TD" ) return;
+                console.dir( td )
+                switch ( i ) {
+                    case 0: useridEl.value   = td.innerHTML; break;
+                    case 1: usernameEl.value = td.innerHTML; break;
+                    case 2: emailEl.value    = td.innerHTML; break;
+                    case 3: indateEl.value   = td.innerHTML; break;
+                }
             })
 
         })
@@ -259,7 +270,7 @@
         // 추가버튼 클릭
         const  btnInsertEl = document.getElementById('btnInsert');
         btnInsertEl.addEventListener('click', async function( event ) {
-           // alert('추가')
+            // alert('추가')
             console.log( event );
             event.preventDefault(); // 기본이벤트 취소
             event.stopPropagation();
@@ -275,48 +286,59 @@
         // -------------------
         // 수정버튼 클릭
         const  btnUpdateEl = document.getElementById('btnUpdate');
-        btnUpdateEl.addEventListener('click', async function() {
-            alert('수정')
+        btnUpdateEl.addEventListener('click', async function(e) {
+            e.preventDefault();
+            e.stopPropagation();
+
+            //alert('수정')
+            try {
+                await data_update();
+            } catch (err) {
+                console.log(err);
+                alert('오류발생')
+            }
+
         })
 
         // -------------------
         // 삭제버튼 클릭
         const  btnDeleteEl = document.getElementById('btnDelete');
         btnDeleteEl.addEventListener('click', async function(e) {
-            // alert('삭제')
+            //alert('삭제')
             e.preventDefault();  // 기본이벤트 제거
-            e.stopPropagation(); // 이벤트 버블링 방지
+            e.stopPropagation();  // 이벤트 버블링 방지
 
             const useridEl = document.getElementById('userid');
-            if (useridEl.value == '') return;
+            if (useridEl.value  == '') return;
 
-            let yes = confirm( useridEl.value + "삭제 하시겠습니까?" )
+            let  yes = confirm(useridEl.value + "를 삭제하시겠습니까?")
 
-            if (!yes) return;
+            if( !yes  || useridEl.value == "admin" ) return;
 
             try {
-                await data_delete( useridEl.value );
+                await data_delete( useridEl.value  );
             } catch (err) {
                 console.log(err);
                 alert('오류발생')
             }
+
         })
 
         // 삭제버튼 : 휴지통 아이콘 클릭 :
-        // 실행시 생성된 버튼이라 검색이 안된다 document.querySelector('.btnDel'); --> null
-        // const div1El = document.querySelectorAll('#div1');
+        // 실행시 생성된 버튼이라 document.querySelector('.btnDel'); --> null
+        // const  div1El = document.querySelector('#div1');
         div1El.addEventListener('click', async e => {
-            e.preventDefault();
-            e.stopPropagation();
+            e.preventDefault()
+            e.stopPropagation()
 
-            // el.closest('tr') : el 의 가장 가까운 부모 tag
-            console.log(e.target.closest('tr'))
-            const tr     = e.target.closest('tr')
-            const userid = tr.dataset.userid
+            // el.closest('tr') : el 의 가장 까까운 부모 tag
+            console.dir(e.target.closest('tr'))
+            const tr       =  e.target.closest('tr')
+            const userid   =  tr.dataset.userid
             // alert(userid)
-            let yes = confirm( userid + "를 삭제하시겠습니까?");
+            let  yes = confirm( userid + "를 삭제하시겠습니까?")
 
-            if (!yes || userid == "admmin") return;
+            if( !yes || userid == "admin" ) return;
 
             try {
                 await data_delete( userid );
@@ -326,27 +348,26 @@
             }
         })
 
-
-
         // -------------------
         // clear 버튼 클릭
         const  btnClearEl = document.getElementById('btnClear');
         btnClearEl.addEventListener('click', async function() {
             text_clear()
         })
+
+        // formToUser()
+        function formToUser() {
+            let user =  {
+                userid   : document.getElementById('userid').value,
+                passwd   : document.getElementById('passwd').value,
+                username : document.getElementById('username').value,
+                email    : document.getElementById('email').value
+            };
+            return user;
+        }
     }
 
-  </script>
+</script>
 
 </body>
 </html>
-
-
-
-
-
-
-
-
-
-
